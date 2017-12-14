@@ -1,0 +1,116 @@
+<div class="container spacer">
+  <div class="card">
+    <div class="card-header text-white bg-primary">Abonnements actuels</div>
+    <div class="card-body">
+      <table class="table table-responsive table-striped">
+        <tr>
+          <th>Num de tél</th>
+          <th>Nom du client</th>
+          <th>Durée</th>
+          <th>Date de début</th>
+          <th>Date de fin</th>
+          <th>Séance d'abonnement</th>
+          <th>Type de terrain</th>
+        </tr>
+        <tr *ngFor="let a of pageAbonnements?.content">
+          <td>{{a.client.clientId}}</td>
+          <td>{{a.client.name}}</td>
+          <td>{{a.duree}}</td>
+          <td>{{a.start.dayOfMonth}}-{{a.start.month}}-{{a.start.year}}</td>
+          <td>{{a.end.dayOfMonth}}-{{a.end.month}}-{{a.end.year}}</td>
+          <td>{{a.seance.jour}} à {{a.seance.heure.hour}}:{{a.seance.heure.minute}}</td>
+          <td>{{a.type}}</td>
+        </tr>
+      </table>
+      <nav aria-label="Ma pagination">
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{'disabled' : currentpage==0}" >
+            <a class="page-link clickable" (click)="gotoPage(currentpage-1)">Previous</a>
+          </li>
+          <li [ngClass]="{'active':i==currentpage}" *ngFor="let p of pages; let i=index" class="page-item">
+            <a class="page-link clickable" (click)="gotoPage(i)">{{i+1}}</a>
+          </li>
+          <li class="page-item" [ngClass]="{'disabled' : currentpage==pages?.length-1}">
+            <a class="page-link clickable" (click)="gotoPage(currentpage+1)">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <button type="button" class="btn btn-primary spacer" data-toggle="modal" data-target="#myModal">
+    Nouveau Abonnement
+  </button>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white bg-primary">
+        <h5 class="modal-title" id="exampleModalLabel">Nouveau Abonnement</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container spacer">
+          <div class="form-group">
+            <label for="numDeTel">Numéro de teléphone</label>
+            <input [(ngModel)]="numTelephone" type="tel" class="form-control" id="numDeTel" placeholder="Entrer le numéro" >
+            <div class="alert alert-danger" role="alert" *ngIf="mode==1">Client inexistant, Saisir le nom pour créer un nouveau client</div>
+            <div class="alert alert-danger" role="alert" *ngIf="errorAbonnement==2">impossible de reserver: client dans la liste noire</div>
+          </div>
+          <div class="form-group" *ngIf="mode==1">
+            <label for="nomClient">Nom du Client</label>
+            <input [(ngModel)]="nomClient" type="tel" class="form-control" id="nomClient" placeholder="Entrer le nom du client">
+          </div>
+          <div class="form-group">
+            <label for="debut">Début</label>
+            <div class="input-group" id="debut">
+              <input class="form-control" placeholder="yyyy-mm-dd"
+                     name="dp" [(ngModel)]="model" ngbDatepicker #d="ngbDatepicker">
+              <button class="input-group-addon" (click)="d.toggle()" type="button">
+                <img src="../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+              </button>
+            </div>
+            <div class="alert alert-danger" role="alert" *ngIf="errorAbonnement==1">Impossible de commencer l'abonnement avant la date d'aujourd'hui, choisissez une autre date</div>
+
+          </div>
+          <div class="form-group">
+            <label for="duree">Durée</label>
+            <select [(ngModel)]="duree" class="form-control" id="duree">
+              <option >3</option>
+              <option >6</option>
+              <option >12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="type">Type de terrain</label>
+            <select [(ngModel)]="type" class="form-control" id="type">
+              <option >5</option>
+              <option >7</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="seance">Séance</label>
+            <select [(ngModel)]="jour" class="form-control" id="seance">
+              <option >MONDAY</option>
+              <option >TUESDAY</option>
+              <option >WEDNESDAY</option>
+              <option >THURSDAY</option>
+              <option >FRIDAY</option>
+              <option >SATURDAY</option>
+              <option >SUNDAY</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="time">heure</label>
+            <ngb-timepicker [(ngModel)]="time" id="time"  required></ngb-timepicker>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="saveAbonnement()">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

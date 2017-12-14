@@ -1,0 +1,96 @@
+<form class="form-inline">
+  <div class="form-group">
+    <div class="input-group">
+      <input class="form-control" placeholder="yyyy-mm-dd"
+             name="dp" [(ngModel)]="model" ngbDatepicker #d="ngbDatepicker" (ngModelChange)="getReservation()">
+      <button class="input-group-addon" (click)="d.toggle()" type="button">
+        <img src="../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+      </button>
+    </div>
+    <div class="spacerr">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Nouvelle Réservation
+      </button>
+    </div>
+  </div>
+</form>
+<hr/>
+<table class="table table-bordered">
+  <tr>
+    <th></th>
+    <th *ngFor="let heure of heures" class="text-white bg-dark">{{heure}}h-{{heure+1}}h</th>
+  </tr>
+  <tr *ngFor="let terrain of terrains">
+    <td>{{terrain.terrainId}}</td>
+    <td *ngFor="let heure of heures" class="{{classeSwitch(reserved[heure][terrain.terrainId])}}">
+      <button *ngIf="reserved[heure][terrain.terrainId]==false" type="button" class="btn btn-outline-success text-white clickable" ngbPopover="terrain {{terrain.terrainId}} : à {{heure}}h" triggers="mouseenter:mouseleave" popoverTitle="Disponible"  data-toggle="modal" data-target="#myModal" (click)="selectionerCase(heure,terrain.terrainId)">
+        Disponible
+      </button>
+      <button *ngIf="reserved[heure][terrain.terrainId].reservationId != null" type="button" class="btn btn-outline-danger text-white" ngbPopover="terrain {{terrain.terrainId}} : à {{heure}}h , resérvé par: {{reserved[heure][terrain.terrainId].client.name}}({{reserved[heure][terrain.terrainId].client.clientId}})" triggers="mouseenter:mouseleave" popoverTitle="Réservé">
+        Réservé
+      </button>
+      <button *ngIf="reserved[heure][terrain.terrainId].changementPelouseId != null" type="button" class="btn btn-outline-warning text-white" ngbPopover="terrain {{terrain.terrainId}} : à {{heure}}h, changement de pelouse" triggers="mouseenter:mouseleave" popoverTitle="Occupé">
+        Occupé
+      </button>
+      <button *ngIf="reserved[heure][terrain.terrainId].reparationLumiereId != null" type="button" class="btn btn-outline-warning text-white" ngbPopover="terrain {{terrain.terrainId}} : à {{heure}}h, réparation de lumière" triggers="mouseenter:mouseleave" popoverTitle="Occupé">
+        Occupé
+      </button>
+    </td>
+  </tr>
+</table>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Nouvelle réservation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container spacer">
+          <div class="form-group">
+            <label for="numDeTel">Numéro de teléphone</label>
+            <input [(ngModel)]="numTelephone" type="tel" class="form-control" id="numDeTel" placeholder="Entrer le numéro">
+            <div class="alert alert-danger" role="alert" *ngIf="mode==1">Client inexistant, Saisir le nom pour créer un nouveau client</div>
+            <div class="alert alert-danger" role="alert" *ngIf="errorReserv==1">impossible de reserver: client dans la liste noire</div>
+          </div>
+          <div class="form-group" *ngIf="mode==1">
+            <label for="nomClient">Nom du Client</label>
+            <input [(ngModel)]="nomClient" type="tel" class="form-control" id="nomClient" placeholder="Entrer le nom du client">
+          </div>
+          <div class="form-group">
+            <label for="terrainDeReservation">Terrain</label>
+            <select [(ngModel)]="terrainId" class="form-control" id="terrainDeReservation">
+              <option *ngFor="let terrain of terrains">{{terrain.terrainId}}</option>
+            </select>
+            <div class="alert alert-danger" role="alert" *ngIf="errorReserv==2">impossible de reserver: Changement de pelouse pendant cette journée pour ce terrain</div>
+            <div class="alert alert-danger" role="alert" *ngIf="errorReserv==3">impossible de reserver: Reparation de lumiere pendant ces 3 heures pour ce terrain</div>
+            <div class="alert alert-danger" role="alert" *ngIf="errorReserv==4">impossible de reserver: Ce terrain est déja réservé pendant cette heure</div>
+          </div>
+          <form class="form">
+            <div class="form-group">
+              <label>Jour</label>
+              <div class="input-group">
+                <input class="form-control" placeholder="yyyy-mm-dd"
+                       name="dp" [(ngModel)]="model" ngbDatepicker #d="ngbDatepicker" (ngModelChange)="getReservation()">
+                <button class="input-group-addon" (click)="d.toggle()" type="button">
+                  <img src="../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="form-group">
+            <label for="time">heure</label>
+            <ngb-timepicker [(ngModel)]="time" id="time" required></ngb-timepicker>
+            <div class="alert alert-danger" role="alert" *ngIf="errorReserv==5">impossible de reserver avant maintenant</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="reserver()">Réserver</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

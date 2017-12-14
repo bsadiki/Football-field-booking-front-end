@@ -1,0 +1,71 @@
+<div class="container spacer">
+  <div class="card">
+    <div class="card-header text-white bg-primary">Utilisateurs actuels</div>
+    <div class="card-body">
+      <table class="table table-responsive table-striped">
+        <tr>
+          <th>UserName</th>
+          <th>Role</th>
+          <th>Activé</th>
+        </tr>
+        <tr *ngFor="let a of pageClients?.content">
+          <td>{{a.username}}</td>
+          <td *ngIf="a.authorities.length==2">Admin</td>
+          <td *ngIf="a.authorities.length==1">User</td>
+          <td>{{a.enabled}}</td>
+        </tr>
+      </table>
+      <nav aria-label="Ma pagination">
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{'disabled' : currentpage==0}" >
+            <a class="page-link clickable" (click)="gotoPage(currentpage-1)">Previous</a>
+          </li>
+          <li [ngClass]="{'active':i==currentpage}" *ngFor="let p of pages; let i=index" class="page-item">
+            <a class="page-link clickable" (click)="gotoPage(i)">{{i+1}}</a>
+          </li>
+          <li class="page-item" [ngClass]="{'disabled' : currentpage==pages?.length-1}">
+            <a class="page-link clickable" (click)="gotoPage(currentpage+1)">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <button type="button" class="btn btn-primary spacer" data-toggle="modal" data-target="#myModal">
+    Nouveau Utilisateur
+  </button>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white bg-primary">
+        <h5 class="modal-title" id="exampleModalLabel">Nouveau Abonnement</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container spacer">
+          <div class="form-group">
+            <label for="userName">UserName</label>
+            <input [(ngModel)]="userName" type="text" class="form-control" id="userName" placeholder="Entrer le nom d'utilisateur" >
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input [(ngModel)]="password" type="text" class="form-control" id="password" placeholder="Entrer le mot de passe" >
+          </div>
+          <div class="form-group">
+            <label for="authority">Role</label>
+            <select [(ngModel)]="authority" class="form-control" id="authority">
+              <option >USER</option>
+              <option >ADMIN</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="addNewUser()">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

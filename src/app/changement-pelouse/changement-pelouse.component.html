@@ -1,0 +1,50 @@
+<div class="container spacer">
+  <div class="card">
+    <div class="card-header text-white bg-primary">Nouveau changement de pelouse</div>
+    <div class="card-body">
+      <div class="form-group">
+        <label for="terrainDeReservation">Terrain</label>
+        <select [(ngModel)]="terrainId" class="form-control" id="terrainDeReservation">
+          <option *ngFor="let terrain of terrains">{{terrain}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-control-label">Date:</label>
+        <ngb-datepicker #dp [(ngModel)]="model" (navigate)="date = $event.next"></ngb-datepicker>
+      </div>
+      <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" (click)="saveReparationLumiere()">
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header {{classeSwitch()}}">
+        <h5 class="modal-title" id="success" *ngIf="success">Changement Pelouse effectué</h5>
+        <h5 class="modal-title" id="error" *ngIf="!success">Erreur</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div *ngIf="!success" class="modal-body">
+        {{message}}
+      </div>
+      <div *ngIf="success" class="modal-body">
+        <div class="form-group">
+          <label for="terrain">Terrain</label>
+          <input [(ngModel)]="changementPelouse.terrain.terrainId" type="text" class="form-control" id="terrain" disabled>
+        </div>
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input [(ngModel)]="date" type="text" class="form-control" id="date" disabled>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
